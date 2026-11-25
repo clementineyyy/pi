@@ -148,3 +148,21 @@ For release preparation, publishing, verification, or recovery, load and follow 
 ## User Override
 
 If the user's instructions conflict with any rule in this document, ask for explicit confirmation before overriding. Only then execute their instructions.
+
+## 代码解释规则
+
+当用户要求解释代码、架构设计或运行机制时，执行一次源码核验：以项目当前源代码为唯一依据，先定位并阅读相关文件、符号和调用链，再回答。回答必须包含具体代码位置（文件路径、行号或符号）、基于源码的机制分析，以及与解释对应的逐行中文注释；若源码无法证明某个结论，明确标注为推测并说明证据缺口。完成标准是：每个关键结论都能追溯到代码位置，每段示例代码都带有逐行中文注释，且未用文档或直觉替代源码证据。
+
+## Agent skills
+
+### Issue tracker
+
+Issues and specs for this repo live in GitHub Issues. Use the `gh` CLI. See `docs/agents/issue-tracker.md`.
+
+### Triage labels
+
+Use the configured GitHub labels for the five canonical triage roles. See `docs/agents/triage-labels.md`.
+
+### Domain docs
+
+Use the multi-context layout, with a root map and package-scoped glossaries and ADRs. See `docs/agents/domain.md`.
