@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="zh-CN">
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<meta name="theme-color" content="#ffffff" />
+		<meta name="description" content="pi 个人智能助理：在对话中按需调用工具完成任务。" />
+		<title>pi · Personal Agent</title>
+		<link rel="preconnect" href="https://fonts.googleapis.com" />
+		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+		<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+SC:wght@400;500;600;700&display=swap" rel="stylesheet" />
+		<link rel="stylesheet" href="/style.css" />
+		<script type="module" src="/app.js"></script>
+	</head>
+	<body>
+		<a class="skip-link" href="#main-content">跳转到对话内容</a>
+		<div class="app-shell">
+			<aside class="sidebar" aria-label="个人助理导航">
+				<div class="sidebar-top">
+					<a class="brand" href="/" aria-label="pi 首页">
+						<span class="brand-mark" aria-hidden="true"><svg viewBox="0 0 32 32" fill="none"><path d="M7 23.5 13.5 7l4.1 10.2L25 9" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/><circle cx="25" cy="23" r="3.5" fill="currentColor"/></svg></span>
+						<span class="brand-copy"><strong>pi</strong><span>PERSONAL AGENT</span></span>
+					</a>
+					<button class="new-chat-button" id="new-chat" type="button">
+						<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 4v12M4 10h12"/></svg><span>新对话</span><kbd>Ctrl K</kbd>
+					</button>
+					<nav class="sidebar-nav" aria-label="主导航">
+						<button class="nav-item" type="button" data-view="plugins"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M7 3v4m6-4v4M5 7h10v3a5 5 0 0 1-10 0V7Zm5 8v2"/></svg><span>插件</span><span class="nav-trailing">1</span></button>
+					</nav>
+				</div>
+				<section class="history-section" aria-labelledby="history-title">
+					<div class="history-heading"><h2 id="history-title">最近对话</h2><button id="refresh-tasks" class="icon-button" type="button" aria-label="刷新对话历史" title="刷新"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M16.4 8A6.5 6.5 0 0 0 5 5.3L3.5 7M3.5 7V3.8M3.5 7h3.2M3.6 12A6.5 6.5 0 0 0 15 14.7l1.5-1.7M16.5 13v3.2M16.5 13h-3.2"/></svg></button></div>
+					<div id="task-list" class="history-list" aria-label="对话历史" aria-live="polite"><div class="history-loading"><span class="spinner" aria-hidden="true"></span><span>正在加载…</span></div></div>
+				</section>
+				<div class="sidebar-bottom">
+					<button class="account-button" type="button" data-view="settings">
+						<span class="account-avatar" aria-hidden="true">P</span><span class="account-copy"><strong>个人工作区</strong><small>账号与设置</small></span><svg class="account-more" viewBox="0 0 20 20" aria-hidden="true"><circle cx="4" cy="10" r="1"/><circle cx="10" cy="10" r="1"/><circle cx="16" cy="10" r="1"/></svg>
+					</button>
+				</div>
+			</aside>
+
+			<main id="main-content" class="main-content" tabindex="-1">
+				<section id="chat-view" class="view chat-view" aria-label="对话">
+					<header class="topbar">
+						<button class="mobile-menu icon-button" id="mobile-menu" type="button" aria-label="打开导航"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M3 5h14M3 10h14M3 15h14"/></svg></button>
+						<div class="model-menu"><span class="model-name">pi</span><span class="model-subtitle">Personal Agent</span><span class="connection-indicator" id="connection-status" role="status"><i aria-hidden="true"></i><span>连接中</span></span></div>
+						<button class="topbar-more icon-button" id="open-settings" type="button" aria-label="运行设置" title="运行设置"><svg viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="2.5"/><path d="m16.4 12.1.1.1a1.5 1.5 0 0 1-2.1 2.1l-.1-.1a1.5 1.5 0 0 0-2.5.8v.2a1.5 1.5 0 0 1-3 0V15a1.5 1.5 0 0 0-2.5-.8l-.1.1a1.5 1.5 0 0 1-2.1-2.1l.1-.1a1.5 1.5 0 0 0-.8-2.5h-.2a1.5 1.5 0 0 1 0-3h.2a1.5 1.5 0 0 0 .8-2.5l-.1-.1a1.5 1.5 0 0 1 2.1-2.1l.1.1a1.5 1.5 0 0 0 2.5-.8v-.2a1.5 1.5 0 0 1 3 0v.2a1.5 1.5 0 0 0 2.5.8l.1-.1a1.5 1.5 0 0 1 2.1 2.1l-.1.1a1.5 1.5 0 0 0 .8 2.5h.2a1.5 1.5 0 0 1 0 3h-.2a1.5 1.5 0 0 0-.8 2.5Z"/></svg></button>
+					</header>
+					<div id="conversation-scroll" class="conversation-scroll">
+						<div id="conversation-content" class="conversation-content" aria-live="polite">
+							<div class="welcome-state" id="welcome-state">
+								<div class="welcome-symbol" aria-hidden="true"><svg viewBox="0 0 40 40" fill="none"><path d="M8 28 16 8l5 12 10-10" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/><circle cx="31" cy="28" r="4" fill="currentColor"/></svg></div>
+								<h1>今天有什么想做的？</h1><p>和 pi 对话，必要时再调用插件完成任务。</p>
+								<div class="suggestion-grid">
+									<button type="button" class="suggestion-card" data-prompt="帮我梳理一下这周最重要的三件事，并给出一个安排建议。"><span class="suggestion-icon icon-plan" aria-hidden="true"><svg viewBox="0 0 20 20"><path d="M5 3h10v14H5zM8 7h4M8 10h4M8 13h2"/></svg></span><span><strong>安排计划</strong><small>梳理优先级，明确下一步</small></span></button>
+									<button type="button" class="suggestion-card" data-prompt="解释一下 agent loop 是什么，并用一个简短例子说明。"><span class="suggestion-icon icon-think" aria-hidden="true"><svg viewBox="0 0 20 20"><path d="M10 3a6 6 0 0 0-3.7 10.7V17h7.4v-3.3A6 6 0 0 0 10 3Zm-2 16h4M8 8a2 2 0 1 1 3.7 1c-.8.6-1.7 1-1.7 2"/></svg></span><span><strong>解释概念</strong><small>把复杂问题讲清楚</small></span></button>
+									<button type="button" class="suggestion-card" data-prompt="搜索近期关于个人 AI agent 的重要进展，并列出来源。" data-plugin="research"><span class="suggestion-icon icon-search" aria-hidden="true"><svg viewBox="0 0 20 20"><circle cx="8.5" cy="8.5" r="5.5"/><path d="m12.5 12.5 4 4M6.5 8.5h4"/></svg></span><span><strong>搜索最新信息</strong><small>按需启用公开网页搜索插件</small></span></button>
+									<button type="button" class="suggestion-card" data-prompt="帮我把下面这段话改写得更清晰、简洁一些："><span class="suggestion-icon icon-write" aria-hidden="true"><svg viewBox="0 0 20 20"><path d="m4 14.5 9.7-9.7 2.5 2.5L6.5 17H4v-2.5ZM12.5 6l2.5 2.5M4 4h5"/></svg></span><span><strong>整理文字</strong><small>起草、改写或提炼重点</small></span></button>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="composer-dock">
+						<form id="task-form" class="composer" aria-label="发送消息">
+							<label class="visually-hidden" for="task-request">发送给 pi 的消息</label>
+							<textarea id="task-request" name="request" rows="1" maxlength="4000" placeholder="给 pi 发消息" required></textarea>
+							<div class="composer-toolbar">
+								<div class="composer-tools">
+									<button class="composer-icon-button" id="plugin-picker" type="button" aria-label="选择插件" aria-expanded="false" aria-controls="plugin-menu" title="选择插件"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M7 3v4m6-4v4M5 7h10v3a5 5 0 0 1-10 0V7Zm5 8v2"/></svg></button>
+									<button class="plugin-chip" id="research-toggle" type="button" aria-pressed="false" title="启用公开网页搜索插件"><svg viewBox="0 0 20 20" aria-hidden="true"><circle cx="8.5" cy="8.5" r="5.5"/><path d="m12.5 12.5 4 4"/></svg><span>网页搜索</span><span class="plugin-chip-state">关闭</span></button>
+									<div class="plugin-menu" id="plugin-menu" hidden><p>可用插件</p><button type="button" class="plugin-menu-item" id="plugin-menu-search"><span class="plugin-menu-icon"><svg viewBox="0 0 20 20" aria-hidden="true"><circle cx="8.5" cy="8.5" r="5.5"/><path d="m12.5 12.5 4 4"/></svg></span><span><strong>公开网页搜索</strong><small>搜索公开网页并附上来源</small></span><span class="plugin-menu-check" aria-hidden="true">✓</span></button><a href="/?view=plugins" class="plugin-manage-link">管理插件</a></div>
+									<span class="composer-hint" id="composer-hint">普通对话</span>
+								</div>
+								<div class="composer-actions"><span id="char-count" class="char-count">0 / 4000</span><button id="submit-task" class="send-button" type="submit" aria-label="发送消息"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 16V4m-5 5 5-5 5 5"/></svg></button></div>
+							</div>
+						</form>
+						<p class="composer-disclaimer" id="form-message" role="status" aria-live="polite">pi 可能会犯错。重要信息请核对。</p>
+					</div>
+				</section>
+
+				<section id="plugins-view" class="view secondary-view" aria-labelledby="plugins-title" hidden>
+					<header class="secondary-header"><button class="back-to-chat" type="button" data-view="chat">返回对话</button><p class="eyebrow">EXTENSIONS</p><h1 id="plugins-title">插件</h1><p>按需启用工具，让 pi 在对话中完成更多任务。</p></header>
+					<div class="plugin-library"><article class="plugin-card"><div class="plugin-card-top"><span class="plugin-card-icon"><svg viewBox="0 0 20 20" aria-hidden="true"><circle cx="8.5" cy="8.5" r="5.5"/><path d="m12.5 12.5 4 4"/></svg></span><span class="plugin-ready" id="plugin-ready">检查配置中</span></div><h2>公开网页搜索</h2><p>搜索公开网络信息，整理摘要并附上可核验的来源。此插件只读公开网页。</p><div class="plugin-card-footer"><span>工具 · MCP</span><button type="button" class="plugin-enable" id="plugin-enable" aria-pressed="false">在对话中启用</button></div></article></div>
+				</section>
+
+				<section id="settings-view" class="view secondary-view" aria-labelledby="settings-title" hidden>
+					<header class="secondary-header"><button class="back-to-chat" type="button" data-view="chat">返回对话</button><p class="eyebrow">WORKSPACE</p><h1 id="settings-title">账号与设置</h1><p>管理个人工作区和服务连接状态。</p></header>
+					<div class="settings-grid">
+						<article class="settings-card"><div class="settings-card-heading"><span class="settings-card-icon model-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 4 7.5v9L12 21l8-4.5v-9L12 3Z"/><path d="m4.5 7.8 7.5 4.3 7.5-4.3M12 12.1V21"/></svg></span><div><h2>模型连接</h2><p>当前服务所用模型的运行状态。</p></div></div><dl class="config-list"><div><dt>模型</dt><dd id="config-model-id">读取中…</dd></div><div><dt>服务地址</dt><dd id="config-model-endpoint">读取中…</dd></div><div><dt>API 凭据</dt><dd id="config-model-credential" class="config-state">读取中…</dd></div></dl></article>
+						<article class="settings-card"><div class="settings-card-heading"><span class="settings-card-icon search-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m15.5 15.5 5 5M8 10.5h5M10.5 8v5"/></svg></span><div><h2>公开搜索插件</h2><p>仅在对话中启用插件时连接搜索服务。</p></div></div><dl class="config-list"><div><dt>服务地址</dt><dd id="config-search-endpoint">读取中…</dd></div><div><dt>API 凭据</dt><dd id="config-search-credential" class="config-state">读取中…</dd></div></dl></article>
+					</div>
+					<div class="settings-footnote"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 2.5 3.5 5v4.2c0 4 2.7 6.8 6.5 8.3 3.8-1.5 6.5-4.3 6.5-8.3V5L10 2.5Z"/><path d="m7.2 9.8 1.8 1.8 3.8-4"/></svg><p><strong>凭据保护</strong><span>密钥只在服务端运行配置中读取，不会显示在对话或浏览器设置中。</span></p></div><p id="settings-error" class="settings-error" role="status" aria-live="polite"></p>
+				</section>
+			</main>
+		</div>
+		<div class="sidebar-scrim" id="sidebar-scrim" hidden></div>
+	</body>
+</html>

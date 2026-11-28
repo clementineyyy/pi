@@ -1,0 +1,7 @@
+{
+	"extends": "../p2/tsconfig.json",
+	"compilerOptions": {
+		"noEmit": true
+	},
+	"include": ["src/**/*.ts", "test/**/*.ts"]
+}
