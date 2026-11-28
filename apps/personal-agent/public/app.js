@@ -179,10 +179,30 @@ function createWelcome() {
 
 function renderSources(parent, sources = []) {
 	if (!sources.length) return;
-	const section = document.createElement("section");
+	const section = document.createElement("details");
 	section.className = "message-sources";
-	const heading = document.createElement("h3");
-	heading.textContent = `来源 · ${sources.length}`;
+	const summary = document.createElement("summary");
+	const heading = document.createElement("span");
+	heading.className = "source-summary-title";
+	heading.textContent = "来源";
+	const count = document.createElement("span");
+	count.className = "source-count";
+	count.textContent = String(sources.length);
+	heading.append(count);
+	const disclosure = document.createElement("span");
+	disclosure.className = "source-disclosure";
+	const expandLabel = document.createElement("span");
+	expandLabel.className = "source-expand-label";
+	expandLabel.textContent = "展开";
+	const collapseLabel = document.createElement("span");
+	collapseLabel.className = "source-collapse-label";
+	collapseLabel.textContent = "收起";
+	const chevron = document.createElement("span");
+	chevron.className = "source-chevron";
+	chevron.setAttribute("aria-hidden", "true");
+	chevron.innerHTML = '<svg viewBox="0 0 16 16"><path d="m4 6 4 4 4-4"/></svg>';
+	disclosure.append(expandLabel, collapseLabel, chevron);
+	summary.append(heading, disclosure);
 	const list = document.createElement("ul");
 	for (const source of sources) {
 		const item = document.createElement("li");
@@ -204,7 +224,7 @@ function renderSources(parent, sources = []) {
 		}
 		list.append(item);
 	}
-	section.append(heading, list);
+	section.append(summary, list);
 	parent.append(section);
 }
 
