@@ -160,7 +160,7 @@ function renderConversation() {
 			answer.className = "message-text assistant-answer";
 			answer.textContent = task.summary || "pi 没有返回内容。";
 			assistantMessage.body.append(answer);
-			if (task.mode === "research") renderSources(assistantMessage.body, task.sources);
+			if (task.mode === "research") renderSources(assistantMessage.body, task.sources, task.id);
 		}
 		conversationContent.append(assistantMessage.row);
 	}
@@ -177,10 +177,16 @@ function createWelcome() {
 	return welcome;
 }
 
-function renderSources(parent, sources = []) {
+function renderSources(parent, sources, taskId) {
 	if (!sources.length) return;
 	const section = document.createElement("details");
 	section.className = "message-sources";
+	const disclosureKey = `pi.personal-agent.sources-open.${taskId}`;
+	section.open = sessionStorage.getItem(disclosureKey) === "true";
+	section.addEventListener("toggle", () => {
+		if (section.open) sessionStorage.setItem(disclosureKey, "true");
+		else sessionStorage.removeItem(disclosureKey);
+	});
 	const summary = document.createElement("summary");
 	const heading = document.createElement("span");
 	heading.className = "source-summary-title";
