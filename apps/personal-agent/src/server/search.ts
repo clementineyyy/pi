@@ -14,6 +14,7 @@ import type { TaskSource } from "../shared/contracts.ts";
 export type McpSearchConfiguration = {
 	readonly url: string;
 	readonly token?: string;
+	readonly keyless?: boolean;
 	readonly toolName?: string;
 };
 
@@ -22,10 +23,12 @@ export function readMcpSearchConfiguration(env: NodeJS.ProcessEnv = process.env)
 	const url = env.AGENT_SEARCH_MCP_URL?.trim();
 	if (!url) return undefined;
 	const token = env.AGENT_SEARCH_MCP_TOKEN?.trim();
+	const keyless = env.AGENT_SEARCH_MCP_KEYLESS?.trim().toLowerCase() === "true";
 	const toolName = env.AGENT_SEARCH_MCP_TOOL?.trim();
 	return {
 		url,
 		...(token ? { token } : {}),
+		...(keyless ? { keyless } : {}),
 		...(toolName ? { toolName } : {}),
 	};
 }
@@ -75,9 +78,13 @@ export async function createMcpPublicSearchTool(
 
 async function withClient<T>(configuration: McpSearchConfiguration, run: (client: McpClient) => Promise<T>): Promise<T> {
 	const client = new McpClient({ name: "pi-personal-agent", version: "0.1.0" });
+	const headers = {
+		...(configuration.token ? { Authorization: `Bearer ${configuration.token}` } : {}),
+		...(configuration.keyless ? { "X-Tavily-Access-Mode": "keyless" } : {}),
+	};
 	const transport = new StreamableHttpTransport({
 		url: configuration.url,
-		...(configuration.token ? { headers: { Authorization: `Bearer ${configuration.token}` } } : {}),
+		...(Object.keys(headers).length > 0 ? { headers } : {}),
 	});
 	await client.connect(transport);
 	try {
@@ -93,7 +100,13 @@ function selectTool(tools: readonly Tool[], configuredName: string | undefined):
 		if (selected) return selected;
 		throw new Error(`AGENT_SEARCH_MCP_TOOL "${configuredName}" is not available on the configured MCP server.`);
 	}
-	const candidates = tools.filter((tool) => /search|web|internet/i.test(`${tool.name} ${tool.title ?? ""} ${tool.description ?? ""}`));
+	const namedSearchTools = tools.filter((tool) => /(?:^|[-_])search(?:$|[-_])/iu.test(tool.name));
+	if (namedSearchTools.length === 1) return namedSearchTools[0]!;
+	if (namedSearchTools.length > 1)
+		throw new Error(
+			`The configured MCP server exposes multiple search tools (${namedSearchTools.map((tool) => tool.name).join(", ")}). Set AGENT_SEARCH_MCP_TOOL to choose one.`,
+		);
+	const candidates = tools.filter((tool) => /\b(search|web|internet)\b/iu.test(`${tool.title ?? ""} ${tool.description ?? ""}`));
 	if (candidates.length === 1) return candidates[0]!;
 	if (candidates.length === 0) throw new Error("The configured MCP server exposes no search tool. Set AGENT_SEARCH_MCP_TOOL.");
 	throw new Error(

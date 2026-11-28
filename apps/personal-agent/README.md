@@ -13,6 +13,7 @@ Set these values in the service's runtime secret/configuration mechanism before 
 - `AGENT_MODEL_API_KEY`: provider credential.
 - `AGENT_SEARCH_MCP_URL`: optional MCP server endpoint that exposes a public web search tool. Set it to enable the research plugin; the tool is connected only for turns where the user enables it.
 - `AGENT_SEARCH_MCP_TOKEN`: optional MCP authorization token for the research plugin.
+- `AGENT_SEARCH_MCP_KEYLESS`: set to `true` to send the Tavily keyless access header. Tavily keyless access is free and rate-limited.
 - `AGENT_SEARCH_MCP_TOOL`: optional exact MCP tool name; otherwise the server selects the available search tool.
 
 Do not put credentials in source control or browser-visible settings. The first implementation uses an in-memory task
